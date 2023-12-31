@@ -1,0 +1,38 @@
+# for IP `docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' postgres_db`
+version: "3.9"
+services:
+  postgresql:
+    image: postgres:latest
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_DB: house
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_ROOT_PASSWORD: root
+    ports:
+      - 5432:5432 # Postgres on localhost:5432
+    networks:
+      - postgres
+    volumes:
+      - pgdata:/home/harsh/Documents/PostgresDB
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin4
+    restart: always
+    depends_on: [postgresql]
+    ports:
+      - "8888:80" # PgAdmin on localhost:8888
+    environment:
+      PGADMIN_DEFAULT_EMAIL: amanupadhyay2004@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    networks:
+      - postgres
+    volumes:
+      - pgadmin-data:/home/harsh/Documents/PostgresDB
+networks:
+  postgres:
+    driver: bridge
+volumes:
+  pgdata:
+  pgadmin-data:
