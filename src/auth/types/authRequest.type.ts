@@ -1,3 +1,3 @@
 export type AuthRequest = Express.Request & {
-    headers: { authorization: string };
+  headers: { authorization: string };
 };

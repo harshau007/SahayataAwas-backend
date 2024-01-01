@@ -1,4 +1,9 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
 
@@ -15,11 +20,13 @@ export class AuthorizationGuard implements CanActivate {
       context.getClass(),
     ]);
 
-    const result = request?.user?.role.map((role:string)=>requiredRole.includes(role)).find((val:boolean)=> val===true)
+    const result = request?.user?.role
+      .map((role: string) => requiredRole.includes(role))
+      .find((val: boolean) => val === true);
 
     if (result) {
       return true;
     }
-    throw new UnauthorizedException("Not Authorized"); 
+    throw new UnauthorizedException('Not Authorized');
   }
 }

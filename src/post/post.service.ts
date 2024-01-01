@@ -10,7 +10,12 @@ import { Request } from 'express';
 
 @Injectable()
 export class PostService {
-  constructor(@InjectRepository(PostEntity) private readonly postRepo: Repository<PostEntity>, private readonly dataSource: DataSource, private readonly userService: UserService) {}
+  constructor(
+    @InjectRepository(PostEntity)
+    private readonly postRepo: Repository<PostEntity>,
+    private readonly dataSource: DataSource,
+    private readonly userService: UserService,
+  ) {}
 
   async create(createPostDto: CreatePostDto, req: AuthRequest) {
     const queryRunner = this.dataSource.createQueryRunner();
@@ -34,32 +39,33 @@ export class PostService {
   }
 
   async findAll() {
-    const users = await this.postRepo.find({ select: {
-      id: true,
-      title: true,
-      description: true,
-      rent: true,
-      duration: true,
-      createdBy: {
-        name: true
-      }
-    }, 
-    relations: {
-      createdBy: true
-    }}
-    );
+    const users = await this.postRepo.find({
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        rent: true,
+        duration: true,
+        createdBy: {
+          name: true,
+        },
+      },
+      relations: {
+        createdBy: true,
+      },
+    });
 
-    return { posts: users }
+    return { posts: users };
   }
 
   async findOne(id: number) {
     const post = await this.postRepo.findOne({
-      where: {id},
+      where: { id },
       relations: {
-        createdBy: true
-      }
+        createdBy: true,
+      },
     });
-    if (!post) throw new BadRequestException("Post does not exist");
+    if (!post) throw new BadRequestException('Post does not exist');
     return post;
   }
 
@@ -76,14 +82,14 @@ export class PostService {
           title: updatePostDto.title,
           description: updatePostDto.description,
           rent: updatePostDto.rent,
-          updatedAt: new Date()
-        }
+          updatedAt: new Date(),
+        },
       );
 
       await queryRunner.manager.save(post);
       await queryRunner.commitTransaction();
 
-      return { "updated": post };
+      return { updated: post };
     } catch (err) {
       await queryRunner.rollbackTransaction();
       throw new BadRequestException('Error occured while updating');
@@ -102,7 +108,7 @@ export class PostService {
       const post = await this.findOne(id);
       await queryRunner.manager.delete(PostEntity, id);
       await queryRunner.commitTransaction();
-      return { "deleted": post };
+      return { deleted: post };
     } catch (err) {
       await queryRunner.rollbackTransaction();
       throw new BadRequestException('Error occured while deleting');
@@ -114,7 +120,10 @@ export class PostService {
   async filter(req: Request) {
     const builder = this.postRepo.createQueryBuilder('posts');
     if (req.query.search) {
-      builder.where('posts.title LIKE :query OR posts.description LIKE :query OR posts.location LIKE :query', {query: `%${req.query.search}%`});
+      builder.where(
+        'posts.title LIKE :query OR posts.description LIKE :query OR posts.location LIKE :query',
+        { query: `%${req.query.search}%` },
+      );
     }
 
     const sort: any = req.query.sort;
@@ -123,7 +132,10 @@ export class PostService {
       builder.orderBy('posts.rent', sort.toUpperCase(), 'NULLS LAST');
     }
 
-    const result = ((await builder.getCount()) == 0) ? `${req.query.search} Not Found` : await builder.getMany();
+    const result =
+      (await builder.getCount()) == 0
+        ? `${req.query.search} Not Found`
+        : await builder.getMany();
     return result;
   }
 }

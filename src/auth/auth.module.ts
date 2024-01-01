@@ -3,12 +3,14 @@ import { AuthService } from './auth.service';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [JwtModule.register({
-    global: true,
-    secret: process.env.SECRET,
-    signOptions: { expiresIn: '15m'}
-  })],
+  imports: [
+    JwtModule.register({
+      global: true,
+      secret: process.env.SECRET,
+      signOptions: { expiresIn: '15m' },
+    }),
+  ],
   providers: [AuthService],
-  exports: [AuthModule, AuthService]
+  exports: [AuthModule, AuthService],
 })
 export class AuthModule {}

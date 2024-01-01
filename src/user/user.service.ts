@@ -11,7 +11,12 @@ import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectRepository(UserEntity) private readonly userRepo: Repository<UserEntity>, private readonly dataSource: DataSource, private readonly jwtService: JwtService) {}
+  constructor(
+    @InjectRepository(UserEntity)
+    private readonly userRepo: Repository<UserEntity>,
+    private readonly dataSource: DataSource,
+    private readonly jwtService: JwtService,
+  ) {}
 
   async signup(createUserDto: UserSignupDto) {
     const queryRunner = this.dataSource.createQueryRunner();
@@ -20,7 +25,8 @@ export class UserService {
 
     createUserDto.password = await hash(createUserDto.password, 10);
 
-    if (await this.UserExist(createUserDto.email)) throw new BadRequestException('Email Already Exists');
+    if (await this.UserExist(createUserDto.email))
+      throw new BadRequestException('Email Already Exists');
 
     try {
       const user = this.userRepo.create(createUserDto);
@@ -37,41 +43,48 @@ export class UserService {
   }
 
   async signin(signinUser: UserSignInDto) {
-    if (!(await this.UserExist(signinUser.email))) throw new BadRequestException('Email does not exists');
+    if (!(await this.UserExist(signinUser.email)))
+      throw new BadRequestException('Email does not exists');
 
-    const user = await this.userRepo.createQueryBuilder('users').addSelect('users.password').where('users.email=:email', {email: signinUser.email}).getOne(); 
+    const user = await this.userRepo
+      .createQueryBuilder('users')
+      .addSelect('users.password')
+      .where('users.email=:email', { email: signinUser.email })
+      .getOne();
 
-    const matchedPass = await compare(signinUser.password, user.password); 
+    const matchedPass = await compare(signinUser.password, user.password);
 
     if (!matchedPass) throw new BadRequestException('Password is incorrect');
 
     delete user.password;
-    
+
     return user;
   }
 
   async findAll() {
-    const users = await this.userRepo.find({ select: {
-      id: true,
-      name: true,
-      email: true,
-      role: true
-    }});
-
-    return { users: users }
-  }
-
-  async findOne(id: number) {
-    const user = await this.userRepo.findOne({
-      where: {id},
+    const users = await this.userRepo.find({
       select: {
         id: true,
         name: true,
         email: true,
-        role: true
-      }
+        role: true,
+      },
     });
-    if (!user) throw new BadRequestException("User does not exist");
+
+    return { users: users };
+  }
+
+  async findOne(id: number) {
+    const user = await this.userRepo.findOne({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+      },
+    });
+    if (!user) throw new BadRequestException('User does not exist');
     return user;
   }
 
@@ -88,14 +101,14 @@ export class UserService {
           name: updateUserDto.name,
           email: updateUserDto.email,
           password: updateUserDto.password,
-          updatedAt: new Date()
-        }
+          updatedAt: new Date(),
+        },
       );
 
       await queryRunner.manager.save(user);
       await queryRunner.commitTransaction();
 
-      return { "updated": user };
+      return { updated: user };
     } catch (err) {
       await queryRunner.rollbackTransaction();
       throw new BadRequestException('Error occured while updating');
@@ -114,7 +127,7 @@ export class UserService {
       const user = await this.findOne(id);
       await queryRunner.manager.delete(UserEntity, id);
       await queryRunner.commitTransaction();
-      return { "deleted": user};
+      return { deleted: user };
     } catch (err) {
       await queryRunner.rollbackTransaction();
       throw new BadRequestException('Error occured while deleting');
@@ -124,11 +137,11 @@ export class UserService {
   }
 
   async UserExist(email: string) {
-    return await this.userRepo.findOneBy({email});
+    return await this.userRepo.findOneBy({ email });
   }
 
   async currentUser(request: AuthRequest) {
-    const token=request.headers.authorization.split(' ')[1];
+    const token = request.headers.authorization.split(' ')[1];
     const payload = await this.jwtService.verifyAsync(token, {
       secret: process.env.SECRET,
     });
