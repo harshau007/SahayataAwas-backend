@@ -7,7 +7,7 @@ import { JwtModule } from '@nestjs/jwt';
     JwtModule.register({
       global: true,
       secret: process.env.SECRET,
-      signOptions: { expiresIn: '15m' },
+      signOptions: { expiresIn: '60s' }, // ExpiresIn should be same as Expires in user --> user.controller.ts --> signin --> response.setCookie
     }),
   ],
   providers: [AuthService],

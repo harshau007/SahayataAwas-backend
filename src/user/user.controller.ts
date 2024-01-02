@@ -15,10 +15,9 @@ import { UserSignupDto } from './dto/user-signup.dto';
 import { UserSignInDto } from './dto/user-signin.dto';
 import { AuthService } from 'src/auth/auth.service';
 import { AuthGuard } from 'src/auth/guards/authentication.gaurd';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { AuthorizationGuard } from 'src/auth/guards/authorization.guard';
 import { Role } from 'decorator/role.decorator';
-import { AuthRequest } from 'src/auth/types/authRequest.type';
 import { UserService } from './user.service';
 
 @Controller('users')
@@ -45,13 +44,26 @@ export class UserController {
       user.role,
     );
 
-    response.set('Authorization', 'Bearer ' + accessToken);
-    response.cookie('Authorization', 'Bearer ' + accessToken, {
-      httpOnly: true,
-      secure: true,
-    });
+    response
+      .cookie('Authorization', accessToken, {
+        httpOnly: true,
+        secure: false, // set 'True' for production
+        sameSite: 'lax',
+        expires: new Date(Date.now() + 1 * 24 * 60 * 1000),
+      })
+      .send({ user: user, accessToken: accessToken });
+  }
 
-    response.send({ user: user, accessToken: accessToken });
+  @Role(['student', 'admin'])
+  @UseGuards(AuthGuard, AuthorizationGuard)
+  @Post('/signout')
+  async signout(@Res() response: Response) {
+    response
+      .clearCookie('Authorization', {
+        httpOnly: true,
+        sameSite: 'lax',
+      })
+      .send({ message: 'Signed Out' });
   }
 
   @Role(['student', 'admin'])
@@ -73,7 +85,7 @@ export class UserController {
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     const user = await this.usersService.update(+id, updateUserDto);
-    return { message: 'User Updated' };
+    return { message: 'User Updated', user };
   }
 
   @Role(['admin'])
@@ -84,7 +96,7 @@ export class UserController {
   }
 
   @Get('current')
-  async getme(@Req() request: AuthRequest) {
+  async getme(@Req() request: Request) {
     return this.usersService.currentUser(request);
   }
 }

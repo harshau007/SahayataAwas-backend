@@ -8,12 +8,10 @@ import {
   Delete,
   Req,
   UseGuards,
-  Query,
 } from '@nestjs/common';
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { AuthRequest } from 'src/auth/types/authRequest.type';
 import { Role } from 'decorator/role.decorator';
 import { AuthGuard } from 'src/auth/guards/authentication.gaurd';
 import { AuthorizationGuard } from 'src/auth/guards/authorization.guard';
@@ -26,7 +24,7 @@ export class PostController {
   @Role(['student', 'admin'])
   @UseGuards(AuthGuard, AuthorizationGuard)
   @Post()
-  create(@Body() createPostDto: CreatePostDto, @Req() req: AuthRequest) {
+  create(@Body() createPostDto: CreatePostDto, @Req() req: Request) {
     return this.postService.create(createPostDto, req);
   }
 

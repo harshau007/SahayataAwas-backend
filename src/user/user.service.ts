@@ -6,8 +6,8 @@ import { DataSource, Repository } from 'typeorm';
 import { UserSignupDto } from './dto/user-signup.dto';
 import { hash, compare } from 'bcrypt';
 import { UserSignInDto } from './dto/user-signin.dto';
-import { AuthRequest } from 'src/auth/types/authRequest.type';
 import { JwtService } from '@nestjs/jwt';
+import { Request } from 'express';
 
 @Injectable()
 export class UserService {
@@ -140,8 +140,8 @@ export class UserService {
     return await this.userRepo.findOneBy({ email });
   }
 
-  async currentUser(request: AuthRequest) {
-    const token = request.headers.authorization.split(' ')[1];
+  async currentUser(request: Request) {
+    const token = request.cookies.Authorization;
     const payload = await this.jwtService.verifyAsync(token, {
       secret: process.env.SECRET,
     });

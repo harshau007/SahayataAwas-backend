@@ -5,7 +5,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { PostEntity } from './entities/post.entity';
 import { DataSource, Repository } from 'typeorm';
 import { UserService } from 'src/user/user.service';
-import { AuthRequest } from 'src/auth/types/authRequest.type';
 import { Request } from 'express';
 
 @Injectable()
@@ -17,13 +16,10 @@ export class PostService {
     private readonly userService: UserService,
   ) {}
 
-  async create(createPostDto: CreatePostDto, req: AuthRequest) {
+  async create(createPostDto: CreatePostDto, req: Request) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
-
-    // if (await this.UserExist(createUserDto.email)) throw new BadRequestException('Email Already Exists');
-
     try {
       const post = this.postRepo.create(createPostDto);
       post.createdBy = await this.userService.currentUser(req);
