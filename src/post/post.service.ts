@@ -117,7 +117,7 @@ export class PostService {
     const builder = this.postRepo.createQueryBuilder('posts');
     if (req.query.search) {
       builder.where(
-        'posts.title LIKE :query OR posts.description LIKE :query OR posts.location LIKE :query',
+        `to_tsvector(posts.title) @@ to_tsquery(:query) OR to_tsvector(posts.description) @@ to_tsquery(:query) OR to_tsvector(posts.location) @@ to_tsquery(:query)`,
         { query: `%${req.query.search}%` },
       );
     }
