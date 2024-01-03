@@ -49,7 +49,7 @@ export class UserController {
         httpOnly: true,
         secure: false, // set 'True' for production
         sameSite: 'lax',
-        expires: new Date(Date.now() + 1 * 24 * 60 * 1000),
+        expires: new Date(Date.now() + 1 * 10 * 60 * 1000),
       })
       .send({ user: user, accessToken: accessToken });
   }
