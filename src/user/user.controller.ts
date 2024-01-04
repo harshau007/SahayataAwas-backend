@@ -47,7 +47,7 @@ export class UserController {
     response
       .cookie('Authorization', accessToken, {
         httpOnly: true,
-        secure: true, // set 'True' for production
+        secure: false, // set 'True' for production
         sameSite: 'lax',
         maxAge: 10 * 60 * 60 * 1000
       })
