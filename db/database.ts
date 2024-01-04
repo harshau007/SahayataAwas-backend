@@ -14,7 +14,7 @@ export const dataSourceOptions: DataSourceOptions = {
     migrations: [],
     logging: false,
     synchronize: true,
-    // ssl: true // For Porduction
+    ssl: true // For Porduction
 }
 
 const dataSource = new DataSource(dataSourceOptions);
