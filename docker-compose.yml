@@ -1,4 +1,4 @@
-# for IP `docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' postgres_db`
+# for IP Address `docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' postgres_db`
 version: "3.9"
 services:
   postgresql:
