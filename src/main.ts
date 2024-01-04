@@ -9,6 +9,7 @@ async function bootstrap() {
     origin: "https://house-frontend-theta.vercel.app", // Production Frontend URL
     methods: ['GET', 'POST', 'PATCH', 'DELETE'],
     credentials: true,
+    exposedHeaders: 'Set-Cookie'
    });
   app.use(cookieParser());
   app.useGlobalPipes(
