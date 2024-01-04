@@ -47,4 +47,4 @@ COPY --chown=node:node --from=build /usr/src/app/dist ./dist
 
 EXPOSE 4000
 
-CMD [ "node", "dist/main.js" ]
+CMD [ "npm", "run", "start:prod" ]
