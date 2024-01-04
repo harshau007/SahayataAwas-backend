@@ -44,9 +44,7 @@ export class UserController {
       user.role,
     );
 
-    response
-      .setHeader('Authorization',accessToken)
-      .send({ user: user, accessToken: accessToken });
+    response.setHeader('Authorization',accessToken).send({ user: user, accessToken: accessToken });
   }
 
   @Role(['student', 'admin'])

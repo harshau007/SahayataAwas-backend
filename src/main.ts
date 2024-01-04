@@ -5,8 +5,13 @@ import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const origins = [
+    "https://house-frontend-theta.vercel.app",
+    "https://house-frontend-theta.vercel.app/signup",
+    "https://house-frontend-theta.vercel.app/login"
+  ]
   app.enableCors({
-    origin: "https://house-frontend-theta.vercel.app", // Production Frontend URL
+    origin: origins, // Production Frontend URL
     methods: ['GET', 'POST', 'PATCH', 'DELETE'],
     credentials: true,
     exposedHeaders: ['Set-Cookie','Authorization'],
