@@ -35,13 +35,14 @@ export class PostService {
   }
 
   async findAll() {
-    const users = await this.postRepo.find({
+    return await this.postRepo.find({
       select: {
         id: true,
         title: true,
         description: true,
         rent: true,
         duration: true,
+        location: true,
         createdBy: {
           name: true,
         },
@@ -50,19 +51,16 @@ export class PostService {
         createdBy: true,
       },
     });
-
-    return { posts: users };
   }
 
   async findOne(id: number) {
-    const post = await this.postRepo.findOne({
+    if(!(await this.postRepo.findOne({ where: { id } }))) throw new BadRequestException('Post does not exist');
+    return await this.postRepo.findOne({
       where: { id },
       relations: {
         createdBy: true,
       },
     });
-    if (!post) throw new BadRequestException('Post does not exist');
-    return post;
   }
 
   async update(id: number, updatePostDto: UpdatePostDto) {

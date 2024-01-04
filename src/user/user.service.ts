@@ -62,7 +62,7 @@ export class UserService {
   }
 
   async findAll() {
-    const users = await this.userRepo.find({
+    return await this.userRepo.find({
       select: {
         id: true,
         name: true,
@@ -70,12 +70,11 @@ export class UserService {
         role: true,
       },
     });
-
-    return { users: users };
   }
 
   async findOne(id: number) {
-    const user = await this.userRepo.findOne({
+    if(!(await this.userRepo.findOne({ where: { id }}))) throw new BadRequestException('User does not exist');
+    return await this.userRepo.findOne({
       where: { id },
       select: {
         id: true,
@@ -84,8 +83,6 @@ export class UserService {
         role: true,
       },
     });
-    if (!user) throw new BadRequestException('User does not exist');
-    return user;
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
