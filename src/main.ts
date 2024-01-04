@@ -6,10 +6,10 @@ import * as cookieParser from 'cookie-parser';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin: "https://house-frontend-theta.vercel.app", // Production Frontend URL
+    origin: "https://house-frontend-six.vercel.app", // Production Frontend URL
     methods: ['GET', 'POST', 'PATCH', 'DELETE'],
     credentials: true,
-    exposedHeaders: 'Set-Cookie'
+    exposedHeaders: ['Set-Cookie','Authorization'],
    });
   app.use(cookieParser());
   app.useGlobalPipes(

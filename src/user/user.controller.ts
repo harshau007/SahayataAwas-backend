@@ -44,13 +44,13 @@ export class UserController {
       user.role,
     );
 
-    response
-      .cookie('Authorization', accessToken, {
-        httpOnly: true,
-        secure: false, // set 'True' for production
-        sameSite: 'lax',
-        maxAge: 10 * 60 * 60 * 1000
-      })
+    response.setHeader('Authorization',accessToken)
+      // .cookie('Authorization', accessToken, {
+      //   httpOnly: true,
+      //   secure: false, // set 'True' for production
+      //   sameSite: 'lax',
+      //   maxAge: 10 * 60 * 60 * 1000
+      // })
       .send({ user: user, accessToken: accessToken });
   }
 
