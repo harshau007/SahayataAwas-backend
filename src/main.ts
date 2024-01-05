@@ -7,8 +7,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const origins = [
     "https://house-frontend-jvkk.onrender.com/",
-    "https://house-frontend-jvkk.onrender.com//signup",
-    "https://house-frontend-jvkk.onrender.com//login"
+    "https://house-frontend-jvkk.onrender.com/signup",
+    "https://house-frontend-jvkk.onrender.com/login"
   ]
   app.enableCors({
     origin: origins, // Production Frontend URL
