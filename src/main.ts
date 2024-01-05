@@ -8,7 +8,10 @@ async function bootstrap() {
   const origins = [       // Production Frontend URL
     "https://house-frontend-theta.vercel.app",
     "https://house-frontend-theta.vercel.app/signup",
-    "https://house-frontend-theta.vercel.app/login"
+    "https://house-frontend-theta.vercel.app/login",
+    "http://localhost:8080",
+    "http://localhost:8080/signup",
+    "http://localhost:8080/login"
   ]
   app.enableCors({
     origin: origins, 

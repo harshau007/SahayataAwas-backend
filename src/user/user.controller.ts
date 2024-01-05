@@ -44,7 +44,7 @@ export class UserController {
       user.role,
     );
 
-    response.setHeader('Authorization',accessToken).send({ user: user, accessToken: accessToken });
+    response.setHeader('Authorization',accessToken).cookie('Authorization', accessToken).send({ user: user, accessToken: accessToken });
   }
 
   @Role(['student', 'admin'])
@@ -91,5 +91,12 @@ export class UserController {
   @Get('current')
   async getme(@Req() request: Request) {
     return this.usersService.currentUser(request);
+  }
+
+  @Role(['student', 'admin'])
+  @UseGuards(AuthGuard, AuthorizationGuard)
+  @Post('verify/token')
+  async verify(@Req() request: Request) {
+    return this.usersService.verifyToken(request);
   }
 }

@@ -138,11 +138,21 @@ export class UserService {
   }
 
   async currentUser(request: Request) {
-    const token = request.cookies.Authorization;
+    const token = request.cookies.Authorization || request.headers.authorization?.split(' ');
     const payload = await this.jwtService.verifyAsync(token, {
       secret: process.env.SECRET,
+    }).catch((err)=> {
+      console.log(err);
     });
     const { email } = payload;
     return await this.UserExist(email);
+  }
+
+  async verifyToken(request: Request) {
+    const user = this.currentUser(request);
+    if(user) {
+      return true;
+    }
+    return false;
   }
 }
