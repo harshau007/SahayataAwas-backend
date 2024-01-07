@@ -151,8 +151,8 @@ export class UserService {
   async verifyToken(request: Request) {
     const user = this.currentUser(request);
     if(user) {
-      return true;
+      return { isVerified: true };
     }
-    return false;
+    return { isVerified: false };
   }
 }

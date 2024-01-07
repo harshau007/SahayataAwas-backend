@@ -95,7 +95,7 @@ export class UserController {
 
   @Role(['student', 'admin'])
   @UseGuards(AuthGuard, AuthorizationGuard)
-  @Post('verify/token')
+  @Get('verify/token')
   async verify(@Req() request: Request) {
     return this.usersService.verifyToken(request);
   }
